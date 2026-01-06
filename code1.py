@@ -284,6 +284,31 @@ df.groupBy('Grade').agg({'Marks':'sum', 'Score': 'mean', 'Score': 'sum', 'Marks'
 # |DISTINCTION|       102|      47.5|
 # +-----------+----------+----------+
 
+# a dictionary cannot have duplicate keys. Python keeps only the last value assigned to that key.
+df.groupBy('Grade').agg({'Marks':'sum', 'Score': 'mean', 'Score': 'sum', 'Marks':'mean'}).show()
+# print the last agg values of a columns:
+# +-----------+----------+----------+
+# |      Grade|sum(Score)|avg(Marks)|
+# +-----------+----------+----------+
+# |       FAIL|        39|      15.0|
+# |       PASS|        49|      25.0|
+# |DISTINCTION|       102|      47.5|
+# +-----------+----------+----------+
+
+# To calculate multiple metrics for the same column: avoid dictionary syntax
+df.groupBy('Grade').agg(
+    sum('Marks').alias('Total_Marks'),
+    mean('Marks').alias('Average_Marks'),
+    stddev('Marks').alias('Std_Dev_Marks')
+).show()
+# +-----------+-----------+-------------+------------------+
+# |      Grade|Total_Marks|Average_Marks|     Std_Dev_Marks|
+# +-----------+-----------+-------------+------------------+
+# |       FAIL|         45|         15.0|               3.0|
+# |       PASS|         75|         25.0|               5.0|
+# |DISTINCTION|         95|         47.5|3.5355339059327378|
+# +-----------+-----------+-------------+------------------+
+
 df.groupBy('Grade').agg(sum('Marks'), mean('Marks'), stddev('Marks')).show()
 # use this for one go
 # +-----------+----------+----------+------------------+
