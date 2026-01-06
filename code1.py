@@ -105,21 +105,114 @@ df.show()
 # | Computer|   50|2020-07-01|DISTINCTION|
 # +---------+-----+----------+-----------+
 
-# df = df.withColumn('score_date', to_date(col("score_date"), "yyyy/MM/dd"))
-# df.show()
+data = [("Maths", 12, '2020-08-01'), ("Pyshics", 15, '2020-01-01'), ("Chemistry", 18, '2020-02-01'), ("English", 20, '2020-03-01'), ("Arts", 25, '2020-04-01'), ("Economics", 30, '2020-05-01'), ("History", 45, '2020-06-01'), ("Computer", 50, '2020-07-01')]
+df = spark.createDataFrame(data).toDF('Sub', 'Marks', 'score_date')
+df.show()
+# +---------+-----+----------+
+# |      Sub|Marks|score_date|
+# +---------+-----+----------+
+# |    Maths|   12|2020-08-01|
+# |  Pyshics|   15|2020-01-01|
+# |Chemistry|   18|2020-02-01|
+# |  English|   20|2020-03-01|
+# |     Arts|   25|2020-04-01|
+# |Economics|   30|2020-05-01|
+# |  History|   45|2020-06-01|
+# | Computer|   50|2020-07-01|
+# +---------+-----+----------+
+print(df.dtypes)
+# [('Sub', 'string'), ('Marks', 'bigint'), ('score_date', 'string')]
 
-# df = df.withColumn('score_date_1', date_format(to_timestamp(col("score_date")), "yyyy-MM-dd"))
-# df.show()
 
-# df = df.withColumn('score_date_1', df["score_date"].cast('date'))
-# df.show()
+df = df.withColumn('score_date_1', to_date(col("score_date"), "yyyy-MM-dd"))
+df.show()
+# +---------+-----+----------+------------+
+# |      Sub|Marks|score_date|score_date_1|
+# +---------+-----+----------+------------+
+# |    Maths|   12|2020-08-01|  2020-08-01|
+# |  Pyshics|   15|2020-01-01|  2020-01-01|
+# |Chemistry|   18|2020-02-01|  2020-02-01|
+# |  English|   20|2020-03-01|  2020-03-01|
+# |     Arts|   25|2020-04-01|  2020-04-01|
+# |Economics|   30|2020-05-01|  2020-05-01|
+# |  History|   45|2020-06-01|  2020-06-01|
+# | Computer|   50|2020-07-01|  2020-07-01|
+# +---------+-----+----------+------------+
+print(df.dtypes)
+# [('Sub', 'string'), ('Marks', 'bigint'), ('score_date', 'string'), ('score_date_1', 'date')]
 
 
-# df = df.select(df.Sub.cast('string'),
-#               df.Marks.cast('integer'),
-#               df.score_date.cast('date'),
-#               df.Grade.cast('string'))
-# df.show()
+# don't pass this pattern
+# returns null if the string in your column doesn't exactly match the pattern you provided.
+df = df.withColumn('score_date_4', to_date(col("score_date"), "yyyy/MM/dd"))
+df.show()
+# +---------+-----+----------+------------+------------+
+# |      Sub|Marks|score_date|score_date_1|score_date_4|
+# +---------+-----+----------+------------+------------+
+# |    Maths|   12|2020-08-01|  2020-08-01|        null|
+# |  Pyshics|   15|2020-01-01|  2020-01-01|        null|
+# |Chemistry|   18|2020-02-01|  2020-02-01|        null|
+# |  English|   20|2020-03-01|  2020-03-01|        null|
+# |     Arts|   25|2020-04-01|  2020-04-01|        null|
+# |Economics|   30|2020-05-01|  2020-05-01|        null|
+# |  History|   45|2020-06-01|  2020-06-01|        null|
+# | Computer|   50|2020-07-01|  2020-07-01|        null|
+# +---------+-----+----------+------------+------------+
+print(df.dtypes)
+# [('Sub', 'string'), ('Marks', 'bigint'), ('score_date', 'string'), ('score_date_1', 'date'), ('score_date_4', 'date')]
+
+df = df.withColumn('score_date_2', date_format(to_timestamp(col("score_date")), "yyyy-MM-dd"))
+df.show()
+# +---------+-----+----------+------------+------------+------------+
+# |      Sub|Marks|score_date|score_date_1|score_date_4|score_date_2|
+# +---------+-----+----------+------------+------------+------------+
+# |    Maths|   12|2020-08-01|  2020-08-01|        null|  2020-08-01|
+# |  Pyshics|   15|2020-01-01|  2020-01-01|        null|  2020-01-01|
+# |Chemistry|   18|2020-02-01|  2020-02-01|        null|  2020-02-01|
+# |  English|   20|2020-03-01|  2020-03-01|        null|  2020-03-01|
+# |     Arts|   25|2020-04-01|  2020-04-01|        null|  2020-04-01|
+# |Economics|   30|2020-05-01|  2020-05-01|        null|  2020-05-01|
+# |  History|   45|2020-06-01|  2020-06-01|        null|  2020-06-01|
+# | Computer|   50|2020-07-01|  2020-07-01|        null|  2020-07-01|
+# +---------+-----+----------+------------+------------+------------+
+print(df.dtypes)
+# [('Sub', 'string'), ('Marks', 'bigint'), ('score_date', 'string'), ('score_date_1', 'date'), ('score_date_4', 'date'), ('score_date_2', 'string')]
+
+df = df.withColumn('score_date_3', df["score_date"].cast('date'))
+df.show()
+# +---------+-----+----------+------------+------------+------------+------------+
+# |      Sub|Marks|score_date|score_date_1|score_date_4|score_date_2|score_date_3|
+# +---------+-----+----------+------------+------------+------------+------------+
+# |    Maths|   12|2020-08-01|  2020-08-01|        null|  2020-08-01|  2020-08-01|
+# |  Pyshics|   15|2020-01-01|  2020-01-01|        null|  2020-01-01|  2020-01-01|
+# |Chemistry|   18|2020-02-01|  2020-02-01|        null|  2020-02-01|  2020-02-01|
+# |  English|   20|2020-03-01|  2020-03-01|        null|  2020-03-01|  2020-03-01|
+# |     Arts|   25|2020-04-01|  2020-04-01|        null|  2020-04-01|  2020-04-01|
+# |Economics|   30|2020-05-01|  2020-05-01|        null|  2020-05-01|  2020-05-01|
+# |  History|   45|2020-06-01|  2020-06-01|        null|  2020-06-01|  2020-06-01|
+# | Computer|   50|2020-07-01|  2020-07-01|        null|  2020-07-01|  2020-07-01|
+# +---------+-----+----------+------------+------------+------------+------------+
+print(df.dtypes)
+# [('Sub', 'string'), ('Marks', 'bigint'), ('score_date', 'string'), ('score_date_1', 'date'), ('score_date_4', 'date'), ('score_date_2', 'string'), ('score_date_3', 'date')]
+
+df = df.select(df.Sub.cast('string'),
+              df.Marks.cast('integer'),
+              df.score_date.cast('date'))
+df.show()
+# +---------+-----+----------+
+# |      Sub|Marks|score_date|
+# +---------+-----+----------+
+# |    Maths|   12|2020-08-01|
+# |  Pyshics|   15|2020-01-01|
+# |Chemistry|   18|2020-02-01|
+# |  English|   20|2020-03-01|
+# |     Arts|   25|2020-04-01|
+# |Economics|   30|2020-05-01|
+# |  History|   45|2020-06-01|
+# | Computer|   50|2020-07-01|
+# +---------+-----+----------+
+print(df.dtypes)
+# [('Sub', 'string'), ('Marks', 'int'), ('score_date', 'date')]
 
 
 df.groupBy('Grade').agg({'Marks':'sum', 'Marks': 'mean', 'Marks':'std'}).show()
